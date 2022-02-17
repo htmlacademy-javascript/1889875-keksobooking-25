@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Ирина Зайнуллина](https://up.htmlacademy.ru/javascript/25/user/1889875).
-* Наставник: `Неизвестно`.
+* Наставник: [Владислав Зубко](https://htmlacademy.ru/profile/whatislove).
 
 ---
 
