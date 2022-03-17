@@ -1,3 +1,3 @@
-import {createOffers} from './data.js';
+import {getSimilarOffer} from './get-similar-offer.js';
 
-window.console.log(createOffers());
+getSimilarOffer();
