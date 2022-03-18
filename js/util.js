@@ -36,7 +36,7 @@ const getArray = (arr) => {
 
 //Функция для нахождения случайного уникального числа в заданном диапазоне:
 const getUniqueNumber = () => {
-  const avatarNumber = Array.from(createAvatarNumber);//преобразую импортируемую функцию в массив
+  const avatarNumber = createAvatarNumber();
   const uniqueNumber = avatarNumber.splice(getRandomPositiveInteger(0, avatarNumber.length - 1), 1);
   if (uniqueNumber < 10) {
     return `0${  uniqueNumber}`;
