@@ -1,0 +1,9 @@
+.form__error {
+  color: #ff0000;
+}
+
+select[name="capacity"] + span {
+  position: absolute;
+  bottom: 105px;
+  left: 365px;
+}
