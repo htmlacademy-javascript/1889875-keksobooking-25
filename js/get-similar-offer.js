@@ -1,5 +1,3 @@
-import {createOffers} from './data.js';
-
 const TYPE_OF_HOUSE = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
@@ -13,9 +11,6 @@ const similarOfferList = document.querySelector('#map-canvas');
 
 //Находим в содержимом тега template шаблон, а в нём нужный элемент:
 const similarOfferTemplate = document.querySelector('#card').content.querySelector('.popup');
-
-//Создаем массив с похожими объявлениями:
-const similarOffers = createOffers();
 
 //Создаем функцию для получения всех доступных удобств в объявлении:
 const getFeatures = (itemTemplate, element) => {
@@ -63,7 +58,7 @@ const getDescription = (itemTemplate, element) => {
 };
 
 //Создаем функцию для отрисовки объявления по шаблону и добавления в блок с картой:
-const getSimilarOffer = ({autor, offer} = similarOffers[0]) => {
+const getSimilarOffer = ({autor, offer}) => {
   const similarOfferListFragment = document.createDocumentFragment();
 
   const similarOfferItem = similarOfferTemplate.cloneNode(true);
