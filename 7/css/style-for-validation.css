@@ -1,0 +1,13 @@
+.form__error {
+  color: #ff0000;
+}
+
+.ad-form__element:nth-child(8) {
+  position: relative;
+}
+
+select[name="capacity"] + span {
+  position: absolute;
+  top: 65px;
+  left: 3px;
+}
