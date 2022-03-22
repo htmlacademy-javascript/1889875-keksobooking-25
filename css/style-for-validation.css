@@ -2,8 +2,12 @@
   color: #ff0000;
 }
 
+.ad-form__element:nth-child(8) {
+  position: relative;
+}
+
 select[name="capacity"] + span {
   position: absolute;
-  bottom: 105px;
-  left: 365px;
+  top: 65px;
+  left: 3px;
 }
