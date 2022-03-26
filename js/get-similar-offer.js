@@ -6,12 +6,6 @@ const TYPE_OF_HOUSE = {
   hotel: 'Отель',
 };
 
-//Блок с картой, где будут размещаться похожие объявления:
-const similarOfferList = document.querySelector('#map-canvas');
-
-//Находим в содержимом тега template шаблон, а в нём нужный элемент:
-const similarOfferTemplate = document.querySelector('#card').content.querySelector('.popup');
-
 //Создаем функцию для получения всех доступных удобств в объявлении:
 const getFeatures = (itemTemplate, element) => {
   const featuresListContainer = ('.popup__features');
@@ -57,9 +51,10 @@ const getDescription = (itemTemplate, element) => {
   }
 };
 
-//Создаем функцию для отрисовки объявления по шаблону и добавления в блок с картой:
+//Создаем функцию для отрисовки объявления по шаблону:
 const getSimilarOffer = ({autor, offer}) => {
-  const similarOfferListFragment = document.createDocumentFragment();
+  //Находим в содержимом тега template шаблон, а в нём нужный элемент:
+  const similarOfferTemplate = document.querySelector('#card').content.querySelector('.popup');
 
   const similarOfferItem = similarOfferTemplate.cloneNode(true);
   similarOfferItem.querySelector('.popup__avatar').src = autor.avatar;
@@ -73,8 +68,7 @@ const getSimilarOffer = ({autor, offer}) => {
   getDescription(similarOfferItem, offer);
   getPhotos(similarOfferItem, offer);
 
-  similarOfferListFragment.appendChild(similarOfferItem);
-  similarOfferList.appendChild(similarOfferListFragment);
+  return similarOfferItem;
 };
 
 export {getSimilarOffer};

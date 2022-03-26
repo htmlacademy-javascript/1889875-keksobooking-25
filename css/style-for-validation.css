@@ -2,7 +2,7 @@
   color: #ff0000;
 }
 
-.ad-form__element:nth-child(8) {
+.ad-form__element--position {
   position: relative;
 }
 
