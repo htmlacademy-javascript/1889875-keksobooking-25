@@ -1,4 +1,9 @@
+import {initMap} from './map.js';
+import {getInactiveForm, getActiveForm} from './get-page-mode.js';
 import {validateForm} from './form.js';
-import './map.js';
+
+getInactiveForm();
 
 validateForm();
+
+initMap(getActiveForm());

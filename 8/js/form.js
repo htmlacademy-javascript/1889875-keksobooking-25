@@ -1,20 +1,16 @@
-import {getPoint} from './map.js';
+import {resetMap} from './map.js';
+import {getSlider} from './get-slider.js';
 
 const form = document.querySelector('.ad-form');
+const mapFilters = document.querySelector('.map__filters');
 const roomsField = form.querySelector('[name="rooms"]');
 const capacityField = form.querySelector('[name="capacity"]');
 const typeField = document.querySelector('[name="type"]');
 const priceField = document.querySelector('[name="price"]');
 const timeinField = document.querySelector('#timein');
 const timeoutField = document.querySelector('#timeout');
-const adFieldsets = form.querySelectorAll('fieldset');
-const mapFilters = document.querySelector('.map__filters');
-const filterFormFields = mapFilters.querySelectorAll('.map__filter');
-const featuresFilterFormField = mapFilters.querySelector('.map__features');
 const resetButton = document.querySelector('.ad-form__reset');
 const slider = form.querySelector('.ad-form__slider');
-const MIN_VALUE_PRICE = 0;
-const MAX_VALUE_PRICE = 100000;
 
 const pristine = new window.Pristine(form, {
   classTo: 'form__item',
@@ -44,39 +40,6 @@ const TIME = {
   '12:00': '12:00',
   '13:00': '13:00',
   '14:00': '14:00',
-};
-
-//Функция добавления/удаления интерактивным полям формы фильтрации атрибута disabled:
-const getDisabledFilterForm = (value) => {
-  for (const filterFormField of filterFormFields) {
-    filterFormField.disabled = value;
-  }
-  featuresFilterFormField.disabled = value;
-};
-//Функция добавления/удаления интерактивным полям формы обьявлений атрибута disabled:
-const getDisabledAdForm = (value) => {
-  for (const adFieldset of adFieldsets) {
-    adFieldset.disabled = value;
-  }
-};
-//Функция для перевода страницы в неактивное состояние:
-const getInactiveForm = () => {
-  mapFilters.classList.add('map__filters--disabled');
-  getDisabledFilterForm(true);
-  form.classList.add('ad-form--disabled');
-  getDisabledAdForm(true);
-  slider.setAttribute('disabled', true);
-};
-
-document.addEventListener('load', getInactiveForm());
-
-//Функция для перевода страницы в активное состояние:
-const getActiveForm = () => {
-  mapFilters.classList.remove('map__filters--disabled');// д.б. доступна только после загрузки данных с сервера
-  getDisabledFilterForm(false);//д.б. доступны только после загрузки данных с сервера
-  form.classList.remove('ad-form--disabled');
-  getDisabledAdForm(false);
-  slider.removeAttribute('disabled');
 };
 
 //Функция для валидации полей с количеством комнат и гостей:
@@ -135,6 +98,9 @@ const validateForm = () => {
     getTypePrice();
     pristine.validate(priceField);
   });
+
+  priceField.addEventListener('focus', getTypePrice());
+
   //Синхронизации полей «Время заезда» и «Время выезда»:
   timeinField.addEventListener('change', () => {
     getCheckOutTime();
@@ -151,64 +117,25 @@ const validateForm = () => {
   });
 };
 
-//Создание слайдера:
+getSlider(priceField, typeField, MIN_PRICE_OF_HOUSING);
 
-priceField.value = 5000;
-
-noUiSlider.create(slider, {
-  range: {
-    min: MIN_VALUE_PRICE,
-    max: MAX_VALUE_PRICE,
-  },
-  start: 5000,
-  step: 100,
-  connect: 'lower',
-  format: {
-    to: function (value) {
-      if (Number.isInteger(value)) {
-        return value.toFixed(0);
-      }
-    },
-    from: function (value) {
-      return parseFloat(value);
-    },
-  },
-});
-
-slider.noUiSlider.on('update', () => {
-  priceField.value = slider.noUiSlider.get();
-});
-
-priceField.addEventListener('change', () => {
-  slider.noUiSlider.set(priceField.value);
-});
-
-typeField.addEventListener('change', () => {
-  if (typeField.value) {
-    slider.noUiSlider.updateOptions({
-      start: MIN_PRICE_OF_HOUSING[typeField.value],
-    });
-  }
-});
-//Очищаем поле с ценой перед вводом значения:
+// Очищаем поле с ценой перед вводом значения:
 priceField.addEventListener('focus', () => {
   priceField.value = '';
 });
 
+//Функция для очистки полей форм фильтрации и создания объявления:
 const resetForm = (evt) => {
   evt.preventDefault();
   mapFilters.reset();
   form.reset();
+  slider.noUiSlider.updateOptions({
+    start: 5000,
+  });
   pristine.reset();
-  // mainPinMarker.setLatLng({
-  //   lat: 35.68950,
-  //   lng: 139.69171,
-  // });
-  getPoint();//получение координат метки
-  //удалить балун
+  resetMap();
 };
 
-//Очистка полей форм фильтрации и создания объявления:
-resetButton.addEventListener('click', resetForm);//при успешн отпр формы или при сбросе настроек - добавить обработчик
+resetButton.addEventListener('click', resetForm);
 
-export {validateForm, getActiveForm};
+export {validateForm};
