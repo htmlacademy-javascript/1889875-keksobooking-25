@@ -11,3 +11,7 @@ select[name="capacity"] + span {
   top: 65px;
   left: 3px;
 }
+
+.ad-form__slider:not(#fake-id) .noUi-connect {
+  background: #00a86b;
+}

@@ -1,25 +1,33 @@
-import {getActiveForm} from './form.js';
 import {createOffers} from './data.js';
 import {getSimilarOffer} from './get-similar-offer.js';
 
-const address = document.querySelector('[name="address"]');
+const CENTER_MAP_LOCATION = {
+  lat: 35.68950,
+  lng: 139.69171,
+};
+const addressField = document.querySelector('[name="address"]');
 
-//Функция для получения координат центра карты
+//Функция для получения координат центра карты для поля с адресом:
 const getCenter = (evt) => {
   const center = evt.target.getCenter();
-  address.value = `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+  addressField.value = `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
 };
 
 //Создаем карту
 const map = L.map('map-canvas')
   .on('load', (evt) => {
     getCenter(evt);
-    getActiveForm();//перевод страницы в активное состояние
   })
   .setView({
-    lat: 35.68950,
-    lng: 139.69171,
+    lat: CENTER_MAP_LOCATION.lat,
+    lng: CENTER_MAP_LOCATION.lng,
   }, 12);
+
+const initMap = (onActive) => {
+  map.on('load', () => {
+    onActive();
+  });
+};
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -37,8 +45,8 @@ const mainPinIcon = L.icon({
 
 const mainPinMarker = L.marker(
   {
-    lat: 35.68950,
-    lng: 139.69171,
+    lat: CENTER_MAP_LOCATION.lat,
+    lng: CENTER_MAP_LOCATION.lng,
   },
   {
     draggable: true,
@@ -48,9 +56,10 @@ const mainPinMarker = L.marker(
 
 mainPinMarker.addTo(map);
 
+//Функция получения координат главной метки:
 const getPoint = () => {
   const point = mainPinMarker.getLatLng();
-  address.value = `${point.lat.toFixed(5)}, ${point.lng.toFixed(5)}`;
+  addressField.value = `${point.lat.toFixed(5)}, ${point.lng.toFixed(5)}`;
 };
 
 mainPinMarker.on('moveend', () => {
@@ -67,7 +76,9 @@ const icon = L.icon({
   iconAnchor: [20, 40],
 });
 
-similarOffers.forEach(({autor, offer, location}) => {
+const markerGroup = L.layerGroup().addTo(map);
+
+const createMarker = ({autor, offer, location}) => {
   const {lat, lng} = location;
   const marker = L.marker(
     {
@@ -80,8 +91,26 @@ similarOffers.forEach(({autor, offer, location}) => {
   );
 
   marker
-    .addTo(map)
+    .addTo(markerGroup)
     .bindPopup(getSimilarOffer({autor, offer}));
+};
+
+similarOffers.forEach(({autor, offer, location}) => {
+  createMarker({autor, offer, location});
 });
 
-export {getPoint};
+//Функция очистки карты и возвращения ее в исходное состояние:
+const resetMap = () => {
+  map.setView({
+    lat: CENTER_MAP_LOCATION.lat,
+    lng: CENTER_MAP_LOCATION.lng,
+  }, 12);
+  mainPinMarker.setLatLng({
+    lat: CENTER_MAP_LOCATION.lat,
+    lng: CENTER_MAP_LOCATION.lng,
+  });
+  markerGroup.clearLayers();
+  getPoint();
+};
+
+export {initMap, resetMap};
