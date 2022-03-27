@@ -1,12 +1,18 @@
+import {resetMap} from './map.js';
+import {getSlider} from './get-slider.js';
+
 const form = document.querySelector('.ad-form');
+const mapFilters = document.querySelector('.map__filters');
 const roomsField = form.querySelector('[name="rooms"]');
 const capacityField = form.querySelector('[name="capacity"]');
 const typeField = document.querySelector('[name="type"]');
 const priceField = document.querySelector('[name="price"]');
 const timeinField = document.querySelector('#timein');
 const timeoutField = document.querySelector('#timeout');
+const resetButton = document.querySelector('.ad-form__reset');
+const slider = form.querySelector('.ad-form__slider');
 
-const pristine = new Pristine(form, {
+const pristine = new window.Pristine(form, {
   classTo: 'form__item',
   errorClass: 'form__item--invalid',
   successClass: 'form__item--valid',
@@ -92,6 +98,9 @@ const validateForm = () => {
     getTypePrice();
     pristine.validate(priceField);
   });
+
+  priceField.addEventListener('focus', getTypePrice());
+
   //Синхронизации полей «Время заезда» и «Время выезда»:
   timeinField.addEventListener('change', () => {
     getCheckOutTime();
@@ -107,5 +116,26 @@ const validateForm = () => {
     }
   });
 };
+
+getSlider(priceField, typeField, MIN_PRICE_OF_HOUSING);
+
+// Очищаем поле с ценой перед вводом значения:
+priceField.addEventListener('focus', () => {
+  priceField.value = '';
+});
+
+//Функция для очистки полей форм фильтрации и создания объявления:
+const resetForm = (evt) => {
+  evt.preventDefault();
+  mapFilters.reset();
+  form.reset();
+  slider.noUiSlider.updateOptions({
+    start: 5000,
+  });
+  pristine.reset();
+  resetMap();
+};
+
+resetButton.addEventListener('click', resetForm);
 
 export {validateForm};

@@ -1,10 +1,9 @@
-import {createOffers} from './data.js';
-import {getSimilarOffer} from './get-similar-offer.js';
+import {initMap} from './map.js';
+import {getInactiveForm, getActiveForm} from './get-page-mode.js';
 import {validateForm} from './form.js';
 
-//Создаем массив с похожими объявлениями:
-const similarOffers = createOffers();
-
-getSimilarOffer(similarOffers[0]);
+getInactiveForm();
 
 validateForm();
+
+initMap(getActiveForm());

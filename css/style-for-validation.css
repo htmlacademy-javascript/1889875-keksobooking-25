@@ -2,7 +2,7 @@
   color: #ff0000;
 }
 
-.ad-form__element:nth-child(8) {
+.ad-form__element--position {
   position: relative;
 }
 
@@ -10,4 +10,8 @@ select[name="capacity"] + span {
   position: absolute;
   top: 65px;
   left: 3px;
+}
+
+.ad-form__slider:not(#fake-id) .noUi-connect {
+  background: #00a86b;
 }
