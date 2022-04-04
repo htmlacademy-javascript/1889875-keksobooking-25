@@ -1,46 +1,26 @@
-import {createAvatarNumber} from './data.js';
+const ALERT_SHOW_TIME = 5000;
 
-//Функция для нахождения случайного целого положительного числа:
-const getRandomPositiveInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
+const showAlert = (message) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = 100;
+  alertContainer.style.position = 'absolute';
+  alertContainer.style.left = 0;
+  alertContainer.style.top = 0;
+  alertContainer.style.right = 0;
+  alertContainer.style.padding = '10px 3px';
+  alertContainer.style.fontSize = '30px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = 'tomato';
+
+  alertContainer.textContent = message;
+
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, ALERT_SHOW_TIME);
 };
 
-//Функция для нахождения случайного числа с плавающей точкой из заданного диапазона
-const getRandomPositiveFloat = (a, b, digits = 1) => {
-  const lower = Math.min(Math.abs(a), Math.abs(b));
-  const upper = Math.max(Math.abs(a), Math.abs(b));
-  const result = Math.random() * (upper - lower) + lower;
-  return +result.toFixed(digits);
-};
+const isEscapeKey = (evt) => evt.key === 'Escape';
 
-//Функция для нахождения случайного элемента массива:
-const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
-
-//Функция для создания массива случайной длины без повтора элементов:
-const getArray = (arr) => {
-  const maxLength = arr.length;
-  const lengthOfArray = getRandomPositiveInteger(1, maxLength);
-  const array = [];
-  for(let i = 0; i < lengthOfArray; i++) {
-    const indexOfEl = getRandomPositiveInteger(0, maxLength - 1);
-    const el = arr[indexOfEl];
-    if (!array.includes(el)) {
-      array.push(el);
-    }
-  }
-  return array;
-};
-
-//Функция для нахождения случайного уникального числа в заданном диапазоне:
-const getUniqueNumber = () => {
-  const avatarNumber = createAvatarNumber();
-  const uniqueNumber = avatarNumber.splice(getRandomPositiveInteger(0, avatarNumber.length - 1), 1);
-  if (uniqueNumber < 10) {
-    return `0${  uniqueNumber}`;
-  } return uniqueNumber;
-};
-
-export {getRandomPositiveFloat, getUniqueNumber, getRandomArrayElement, getRandomPositiveInteger, getArray};
+export {showAlert, isEscapeKey};
