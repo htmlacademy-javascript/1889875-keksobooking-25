@@ -9,7 +9,7 @@ const getSlider = (priceHouse, typeHouse, objectHouse) => {
       max: MAX_VALUE_PRICE,
     },
     start: 5000,
-    step: 1.0,
+    step: 50.0,
     connect: 'lower',
     format: {
       to: function (value) {
@@ -17,14 +17,12 @@ const getSlider = (priceHouse, typeHouse, objectHouse) => {
           return value.toFixed(0);
         }
       },
-      from: function (value) {
-        return parseFloat(value);
-      },
+      from: (value) => parseFloat(value),
     },
   });
 
   slider.noUiSlider.on('update', () => {
-    priceHouse.value = slider.noUiSlider.get();
+    priceHouse.value = slider.noUiSlider.get(true).toFixed(0);
   });
 
   priceHouse.addEventListener('change', () => {

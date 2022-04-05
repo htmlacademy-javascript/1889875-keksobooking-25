@@ -8,7 +8,7 @@ const TYPE_OF_HOUSE = {
 
 //Создаем функцию для получения всех доступных удобств в объявлении:
 const getFeatures = (itemTemplate, element) => {
-  const featuresListContainer = ('.popup__features');
+  const featuresListContainer = itemTemplate.querySelector('.popup__features');
   const featuresList = itemTemplate.querySelectorAll('.popup__feature');
   if (!element.features) {
     featuresListContainer.remove();
@@ -52,12 +52,12 @@ const getDescription = (itemTemplate, element) => {
 };
 
 //Создаем функцию для отрисовки объявления по шаблону:
-const getSimilarOffer = ({autor, offer}) => {
+const getSimilarOffer = ({author, offer}) => {
   //Находим в содержимом тега template шаблон, а в нём нужный элемент:
   const similarOfferTemplate = document.querySelector('#card').content.querySelector('.popup');
 
   const similarOfferItem = similarOfferTemplate.cloneNode(true);
-  similarOfferItem.querySelector('.popup__avatar').src = autor.avatar;
+  similarOfferItem.querySelector('.popup__avatar').src = author.avatar;
   similarOfferItem.querySelector('.popup__title').textContent = offer.title;
   similarOfferItem.querySelector('.popup__text--address').textContent = offer.address;
   similarOfferItem.querySelector('.popup__text--price').innerHTML = `${offer.price} <span>₽/ночь</span>`;

@@ -12,7 +12,7 @@ const timeoutField = document.querySelector('#timeout');
 const resetButton = document.querySelector('.ad-form__reset');
 const slider = form.querySelector('.ad-form__slider');
 
-const pristine = new window.Pristine(form, {
+const pristine = window.Pristine(form, {
   classTo: 'form__item',
   errorClass: 'form__item--invalid',
   successClass: 'form__item--valid',
@@ -88,18 +88,30 @@ const getCheckInTime = () => {
 pristine.addValidator(capacityField, validateRooms, getRoomsErrorMessage);
 pristine.addValidator(priceField, validatePrice, getPriceErrorMessage);
 
+//Функция создания слайдера с ценой:
+getSlider(priceField, typeField, MIN_PRICE_OF_HOUSING);
+
+// Очищаем поле с ценой перед вводом значения:
+priceField.addEventListener('focus', () => {
+  priceField.value = '';
+});
+
+const validate = (element) => pristine.validate(element);
+
 const validateForm = () => {
   //Валидация полей количеством комнат и количеством гостей:
   roomsField.addEventListener('change', () => {
-    pristine.validate(capacityField);
+    validate(capacityField);
   });
   //Валидация поля тип жилья с ценой:
   typeField.addEventListener('change', () => {
     getTypePrice();
-    pristine.validate(priceField);
+    validate(priceField);
   });
 
-  priceField.addEventListener('focus', getTypePrice());
+  priceField.addEventListener('focus', () => {
+    getTypePrice();
+  });
 
   //Синхронизации полей «Время заезда» и «Время выезда»:
   timeinField.addEventListener('change', () => {
@@ -108,25 +120,10 @@ const validateForm = () => {
   timeoutField.addEventListener('change', () => {
     getCheckInTime();
   });
-  //Валидация формы объявления:
-  form.addEventListener('submit', (evt) => {
-    const isValid = pristine.validate();
-    if (!isValid) {
-      evt.preventDefault();
-    }
-  });
 };
 
-getSlider(priceField, typeField, MIN_PRICE_OF_HOUSING);
-
-// Очищаем поле с ценой перед вводом значения:
-priceField.addEventListener('focus', () => {
-  priceField.value = '';
-});
-
-//Функция для очистки полей форм фильтрации и создания объявления:
-const resetForm = (evt) => {
-  evt.preventDefault();
+//Функция для очистки полей формы при успешной отправке формы или её очистке:
+const resetForm = () => {
   mapFilters.reset();
   form.reset();
   slider.noUiSlider.updateOptions({
@@ -136,6 +133,9 @@ const resetForm = (evt) => {
   resetMap();
 };
 
-resetButton.addEventListener('click', resetForm);
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  resetForm();
+});
 
-export {validateForm};
+export {validateForm, resetForm, validate};

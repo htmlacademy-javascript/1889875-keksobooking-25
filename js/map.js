@@ -1,4 +1,3 @@
-import {createOffers} from './data.js';
 import {getSimilarOffer} from './get-similar-offer.js';
 
 const CENTER_MAP_LOCATION = {
@@ -68,8 +67,6 @@ mainPinMarker.on('moveend', () => {
 
 //Создание меток объявлений:
 
-const similarOffers = createOffers();
-
 const icon = L.icon({
   iconUrl: './img/pin.svg',
   iconSize: [40, 40],
@@ -78,7 +75,7 @@ const icon = L.icon({
 
 const markerGroup = L.layerGroup().addTo(map);
 
-const createMarker = ({autor, offer, location}) => {
+const createMarker = ({author, offer, location}) => {
   const {lat, lng} = location;
   const marker = L.marker(
     {
@@ -92,12 +89,14 @@ const createMarker = ({autor, offer, location}) => {
 
   marker
     .addTo(markerGroup)
-    .bindPopup(getSimilarOffer({autor, offer}));
+    .bindPopup(getSimilarOffer({author, offer}));
 };
 
-similarOffers.forEach(({autor, offer, location}) => {
-  createMarker({autor, offer, location});
-});
+const getSimilarOffers = (object) => {
+  object.forEach(({author, offer, location}) => {
+    createMarker({author, offer, location});
+  });
+};
 
 //Функция очистки карты и возвращения ее в исходное состояние:
 const resetMap = () => {
@@ -113,4 +112,4 @@ const resetMap = () => {
   getPoint();
 };
 
-export {initMap, resetMap};
+export {initMap, resetMap, getSimilarOffers};
