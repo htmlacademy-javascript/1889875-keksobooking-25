@@ -29,11 +29,14 @@ const getInactiveForm = () => {
 
 //Функция для перевода страницы в активное состояние:
 const getActiveForm = () => {
-  mapFilters.classList.remove('map__filters--disabled');
-  getDisabledFilterForm(false);
   form.classList.remove('ad-form--disabled');
   getDisabledAdForm(false);
   slider.removeAttribute('disabled');
 };
 
-export {getInactiveForm, getActiveForm};
+const getActiveFilterForm = () => {
+  mapFilters.classList.remove('map__filters--disabled');
+  getDisabledFilterForm(false);
+};
+
+export {getInactiveForm, getActiveForm, getActiveFilterForm};

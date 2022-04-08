@@ -1,4 +1,11 @@
 import {getSimilarOffer} from './get-similar-offer.js';
+import { getFilterData } from './filter-form.js';
+import { getActiveFilterForm, getActiveForm } from './get-page-mode.js';
+import { getData } from './api.js';
+
+const AD_COUNT = 10;
+
+const mapFilters = document.querySelector('.map__filters');
 
 const CENTER_MAP_LOCATION = {
   lat: 35.68950,
@@ -13,20 +20,7 @@ const getCenter = (evt) => {
 };
 
 //Создаем карту
-const map = L.map('map-canvas')
-  .on('load', (evt) => {
-    getCenter(evt);
-  })
-  .setView({
-    lat: CENTER_MAP_LOCATION.lat,
-    lng: CENTER_MAP_LOCATION.lng,
-  }, 12);
-
-const initMap = (onActive) => {
-  map.on('load', () => {
-    onActive();
-  });
-};
+const map = L.map('map-canvas');
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -92,10 +86,43 @@ const createMarker = ({author, offer, location}) => {
     .bindPopup(getSimilarOffer({author, offer}));
 };
 
-const getSimilarOffers = (object) => {
-  object.forEach(({author, offer, location}) => {
-    createMarker({author, offer, location});
+const resetMarkerGroup = () => {
+  markerGroup.closePopup();
+  markerGroup.clearLayers();
+};
+
+const getSimilarOffers = (offers) => {
+  getFilterData(offers)
+    .slice(0, AD_COUNT)
+    .forEach(({author, offer, location}) => {
+      createMarker({author, offer, location});
+    });
+};
+
+const rerenderSimilarOffers = (cb, offers) => {
+  mapFilters.addEventListener('change', () => {
+    resetMarkerGroup();
+    const arr = getFilterData(offers).slice(0, AD_COUNT);
+    cb(arr);
+    window.console.log(arr);//--------------для проверки загружаемых объявлений
   });
+};
+
+const initMap = () => {
+  map
+    .on('load', (evt) => {
+      getCenter(evt);
+      getActiveForm();
+      getData((offers) => {
+        getSimilarOffers(offers);
+        getActiveFilterForm();
+        rerenderSimilarOffers(getSimilarOffers, offers);
+      });
+    })
+    .setView({
+      lat: CENTER_MAP_LOCATION.lat,
+      lng: CENTER_MAP_LOCATION.lng,
+    }, 12);
 };
 
 //Функция очистки карты и возвращения ее в исходное состояние:
