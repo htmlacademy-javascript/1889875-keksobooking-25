@@ -6,59 +6,52 @@ const housingRooms = document.querySelector('#housing-rooms');
 const housingGuests = document.querySelector('#housing-guests');
 const housingFeatures = document.querySelector('#housing-features');
 
-// window.console.log(features);//---------------------------------------------------
-
-const filterType = (offers) => {
+const filterType = (offer) => {
   if (housingType.value === DEFAULT_VALUE) {
     return true;
   } else {
-    return offers.offer.type === housingType.value;
+    return offer.offer.type === housingType.value;
   }
 };
 
-const filterPrice = (offers) => {
+const filterPrice = (offer) => {
   if (housingPrice.value === DEFAULT_VALUE) {
     return true;
-  } else if (offers.offer.price < 10000 && housingPrice.value === 'low') {
+  } else if (offer.offer.price < 10000 && housingPrice.value === 'low') {
     return true;
-  } else if (offers.offer.price >= 10000 && offers.offer.price <= 50000 && housingPrice.value === 'middle') {
+  } else if (offer.offer.price >= 10000 && offer.offer.price <= 50000 && housingPrice.value === 'middle') {
     return true;
-  } else if (offers.offer.price > 50000 && housingPrice.value === 'high') {
+  } else if (offer.offer.price > 50000 && housingPrice.value === 'high') {
     return true;
   }
 };
 
-const filterRooms = (offers) => {
+const filterRooms = (offer) => {
   if (housingRooms.value === DEFAULT_VALUE) {
     return true;
   } else {
-    return offers.offer.rooms === Number(housingRooms.value);
+    return offer.offer.rooms === Number(housingRooms.value);
   }
 };
 
-const filterGuests = (offers) => {
+const filterGuests = (offer) => {
   if (housingGuests.value === DEFAULT_VALUE) {
     return true;
   } else {
-    return offers.offer.guests === Number(housingGuests.value);
+    return offer.offer.guests === Number(housingGuests.value);
   }
 };
 
-const filterFeatures = (offers) => {// не работает данная функция!!!!!!!!!!!!!!!!!
-  const arr = [];
-  const features = housingFeatures.querySelectorAll('.map__checkbox:checked');
-  for (const feature of features) {
-    arr.push(feature.value);
-  }
-  window.console.log(arr);//проверка - массив с чекнутыми чекбоксами выводит в консоль
+const filterFeatures = (offer) => {
+  const checkFeatures = housingFeatures.querySelectorAll('input:checked');
 
-  arr.every((feature) => {
-    if (arr.length === 0) {
-      return true;
-    } else {
-      return offers.offer.features.includes(feature);
+  if (checkFeatures.length) {
+    if (offer.offer.features) {
+      return Array.from(checkFeatures).every((checkbox) => offer.offer.features.includes(checkbox.value));
     }
-  });
+  } else {
+    return checkFeatures.length === 0;
+  }
 };
 
 const getFilterData = (offers) => offers.filter((offer) => filterType(offer) && filterPrice(offer) && filterRooms(offer) && filterGuests(offer) && filterFeatures(offer));

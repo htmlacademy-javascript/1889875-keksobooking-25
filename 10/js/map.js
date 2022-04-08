@@ -1,9 +1,12 @@
-import {getSimilarOffer} from './get-similar-offer.js';
+import { getSimilarOffer } from './get-similar-offer.js';
 import { getFilterData } from './filter-form.js';
 import { getActiveFilterForm, getActiveForm } from './get-page-mode.js';
 import { getData } from './api.js';
+import { debounce } from './util.js';
 
 const AD_COUNT = 10;
+const RERENDER_DELAY = 500;
+const localOffers = [];
 
 const mapFilters = document.querySelector('.map__filters');
 
@@ -86,37 +89,39 @@ const createMarker = ({author, offer, location}) => {
     .bindPopup(getSimilarOffer({author, offer}));
 };
 
+//Функция отрисовки меток объявлений:
+const renderOffers = (offers) => {
+  offers.forEach(({author, offer, location}) => {
+    createMarker({author, offer, location});
+  });
+};
+
+//Функция скрытия попапа и удаления меток на карте:
 const resetMarkerGroup = () => {
   markerGroup.closePopup();
   markerGroup.clearLayers();
 };
 
-const getSimilarOffers = (offers) => {
-  getFilterData(offers)
-    .slice(0, AD_COUNT)
-    .forEach(({author, offer, location}) => {
-      createMarker({author, offer, location});
-    });
-};
+//Функция отображения и фильтрации похожих объявлений на карте:
+const createSimilarOffers = (offers) => {
+  getActiveFilterForm();
+  renderOffers(offers.slice(0, AD_COUNT));
 
-const rerenderSimilarOffers = (cb, offers) => {
-  mapFilters.addEventListener('change', () => {
+  mapFilters.addEventListener('change', debounce(() => {
     resetMarkerGroup();
-    const arr = getFilterData(offers).slice(0, AD_COUNT);
-    cb(arr);
-    window.console.log(arr);//--------------для проверки загружаемых объявлений
-  });
+    renderOffers(getFilterData(offers).slice(0, AD_COUNT));
+  }, RERENDER_DELAY));
 };
 
+//Функция загрузки и инициализации карты:
 const initMap = () => {
   map
     .on('load', (evt) => {
       getCenter(evt);
       getActiveForm();
       getData((offers) => {
-        getSimilarOffers(offers);
-        getActiveFilterForm();
-        rerenderSimilarOffers(getSimilarOffers, offers);
+        localOffers.push(...offers);
+        createSimilarOffers(localOffers);
       });
     })
     .setView({
@@ -135,8 +140,9 @@ const resetMap = () => {
     lat: CENTER_MAP_LOCATION.lat,
     lng: CENTER_MAP_LOCATION.lng,
   });
-  markerGroup.clearLayers();
+  resetMarkerGroup();
   getPoint();
+  renderOffers(localOffers.slice(0, AD_COUNT));
 };
 
-export {initMap, resetMap, getSimilarOffers};
+export {initMap, resetMap};
