@@ -1,5 +1,6 @@
 import {resetMap} from './map.js';
 import {getSlider} from './get-slider.js';
+import { resetImages } from './foto.js';
 
 const form = document.querySelector('.ad-form');
 const mapFilters = document.querySelector('.map__filters');
@@ -126,6 +127,7 @@ const validateForm = () => {
 const resetForm = () => {
   mapFilters.reset();
   form.reset();
+  resetImages();
   slider.noUiSlider.updateOptions({
     start: 5000,
   });
