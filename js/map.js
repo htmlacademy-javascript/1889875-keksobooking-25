@@ -1,4 +1,14 @@
-import {getSimilarOffer} from './get-similar-offer.js';
+import { getSimilarOffer } from './get-similar-offer.js';
+import { getFilterData } from './filter-form.js';
+import { getActiveFilterForm, getActiveForm } from './get-page-mode.js';
+import { getData } from './api.js';
+import { debounce } from './util.js';
+
+const AD_COUNT = 10;
+const RERENDER_DELAY = 500;
+const localOffers = [];
+
+const mapFilters = document.querySelector('.map__filters');
 
 const CENTER_MAP_LOCATION = {
   lat: 35.68950,
@@ -13,20 +23,7 @@ const getCenter = (evt) => {
 };
 
 //Создаем карту
-const map = L.map('map-canvas')
-  .on('load', (evt) => {
-    getCenter(evt);
-  })
-  .setView({
-    lat: CENTER_MAP_LOCATION.lat,
-    lng: CENTER_MAP_LOCATION.lng,
-  }, 12);
-
-const initMap = (onActive) => {
-  map.on('load', () => {
-    onActive();
-  });
-};
+const map = L.map('map-canvas');
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -92,10 +89,45 @@ const createMarker = ({author, offer, location}) => {
     .bindPopup(getSimilarOffer({author, offer}));
 };
 
-const getSimilarOffers = (object) => {
-  object.forEach(({author, offer, location}) => {
+//Функция отрисовки меток объявлений:
+const renderOffers = (offers) => {
+  offers.forEach(({author, offer, location}) => {
     createMarker({author, offer, location});
   });
+};
+
+//Функция скрытия попапа и удаления меток на карте:
+const resetMarkerGroup = () => {
+  markerGroup.closePopup();
+  markerGroup.clearLayers();
+};
+
+//Функция отображения и фильтрации похожих объявлений на карте:
+const createSimilarOffers = (offers) => {
+  getActiveFilterForm();
+  renderOffers(offers.slice(0, AD_COUNT));
+
+  mapFilters.addEventListener('change', debounce(() => {
+    resetMarkerGroup();
+    renderOffers(getFilterData(offers).slice(0, AD_COUNT));
+  }, RERENDER_DELAY));
+};
+
+//Функция загрузки и инициализации карты:
+const initMap = () => {
+  map
+    .on('load', (evt) => {
+      getCenter(evt);
+      getActiveForm();
+      getData((offers) => {
+        localOffers.push(...offers);
+        createSimilarOffers(localOffers);
+      });
+    })
+    .setView({
+      lat: CENTER_MAP_LOCATION.lat,
+      lng: CENTER_MAP_LOCATION.lng,
+    }, 12);
 };
 
 //Функция очистки карты и возвращения ее в исходное состояние:
@@ -108,8 +140,9 @@ const resetMap = () => {
     lat: CENTER_MAP_LOCATION.lat,
     lng: CENTER_MAP_LOCATION.lng,
   });
-  markerGroup.clearLayers();
+  resetMarkerGroup();
   getPoint();
+  renderOffers(localOffers.slice(0, AD_COUNT));
 };
 
-export {initMap, resetMap, getSimilarOffers};
+export {initMap, resetMap};
