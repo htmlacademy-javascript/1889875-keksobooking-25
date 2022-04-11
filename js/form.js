@@ -1,6 +1,6 @@
 import {resetMap} from './map.js';
 import {getSlider} from './get-slider.js';
-import { resetImages } from './foto.js';
+import { resetImages } from './photo.js';
 
 const form = document.querySelector('.ad-form');
 const mapFilters = document.querySelector('.map__filters');

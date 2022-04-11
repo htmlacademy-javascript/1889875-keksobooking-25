@@ -12,7 +12,7 @@ const getSlider = (priceHouse, typeHouse, objectHouse) => {
     step: 50.0,
     connect: 'lower',
     format: {
-      to: function (value) {
+      to: (value) => {
         if (Number.isInteger(value)) {
           return value.toFixed(0);
         }
