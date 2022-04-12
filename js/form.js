@@ -29,6 +29,13 @@ const ROOMS_OPTION = {
   '100': ['0'],
 };
 
+const NumberRoom = {
+  SINGLE_ROOM: '1',
+  DOUBLE_ROOMS: '2',
+  TRIPLE_ROOMS: '3',
+  HUNDRED_ROOMS: '100',
+};
+
 const MIN_PRICE_OF_HOUSING = {
   'bungalow': 0,
   'flat': 1000,
@@ -48,16 +55,15 @@ const validateRooms = () => ROOMS_OPTION[roomsField.value].includes(capacityFiel
 
 //Функция для генерации сообщения о некорректном соотношении комнат и гостей:
 const getRoomsErrorMessage = () => {
-  const roomsValue = Number(roomsField.value);
-  const capacityValue = Number(capacityField.value);
-  if (roomsValue === 1 && capacityValue !== 1) {
-    return '1 комната для 1 гостя';
-  } else if (roomsValue === 2 && (capacityValue === 3 || capacityValue === 0)) {
-    return '2 комнаты для 1 или 2 гостей';
-  } else if (roomsValue === 3 && capacityValue === 0) {
-    return '3 комнаты для 1, 2 или 3 гостей';
-  } else if (roomsValue === 100 && capacityValue !== 0) {
-    return '100 комнат не для гостей';
+  switch (roomsField.value) {
+    case NumberRoom.SINGLE_ROOM:
+      return '1 комната для 1 гостя';
+    case NumberRoom.DOUBLE_ROOMS:
+      return '2 комнаты для 1 или 2 гостей';
+    case NumberRoom.TRIPLE_ROOMS:
+      return '3 комнаты для 1, 2 или 3 гостей';
+    case NumberRoom.HUNDRED_ROOMS:
+      return '100 комнат не для гостей';
   }
 };
 
