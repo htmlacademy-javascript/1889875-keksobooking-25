@@ -1,5 +1,16 @@
 const DEFAULT_VALUE = 'any';
 
+const PriceRange = {
+  LOW: 10000,
+  HIGH: 50000,
+};
+
+const PriceLevel = {
+  LOW: 'low',
+  MIDDLE: 'middle',
+  HIGH: 'high',
+};
+
 const housingType = document.querySelector('#housing-type');
 const housingPrice = document.querySelector('#housing-price');
 const housingRooms = document.querySelector('#housing-rooms');
@@ -15,14 +26,15 @@ const filterType = (offer) => {
 };
 
 const filterPrice = (offer) => {
-  if (housingPrice.value === DEFAULT_VALUE) {
-    return true;
-  } else if (offer.offer.price < 10000 && housingPrice.value === 'low') {
-    return true;
-  } else if (offer.offer.price >= 10000 && offer.offer.price <= 50000 && housingPrice.value === 'middle') {
-    return true;
-  } else if (offer.offer.price > 50000 && housingPrice.value === 'high') {
-    return true;
+  switch (housingPrice.value) {
+    case PriceLevel.LOW:
+      return offer.offer.price < PriceRange.LOW;
+    case PriceLevel.MIDDLE:
+      return offer.offer.price >= PriceRange.LOW && offer.offer.price <= PriceRange.HIGH;
+    case PriceLevel.HIGH:
+      return offer.offer.price > PriceRange.HIGH;
+    case DEFAULT_VALUE:
+      return true;
   }
 };
 
